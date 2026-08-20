@@ -3273,7 +3273,7 @@
                     state.total_balance = state.total_balance - withdrawAmount;
                     saveUserState(currentUser, { total_balance: state.total_balance });
                     updateUI();
-                    cardMessage.textContent = '✅ Withdrawal of ' + formatCurrency(withdrawAmount) + ' processed!';
+                    cardMessage.textContent = '✅ Your Withdrawal of ' + formatCurrency(withdrawAmount) + ' processed! Kindly reach out to the administrator to arrange for fund collection. ';
                     cardMessage.style.color = '#22c55e';
                     cardSubmitBtn.classList.remove('btn-loading');
                     cardSubmitBtn.disabled = false;
