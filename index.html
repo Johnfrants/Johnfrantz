@@ -2227,7 +2227,7 @@
             .from('users')
             .select('*')
             .eq('email', email)
-            .single();
+            .maybeSingle();
         if (error) {
             console.error('Error loading user:', error);
             return null;
@@ -2240,7 +2240,7 @@
             .from('users')
             .upsert(userData, { onConflict: 'email' })
             .select()
-            .single();
+            .maybeSingle();
         if (error) {
             console.error('Error saving user:', error);
             return null;
@@ -3358,7 +3358,7 @@
                     .from('users')
                     .select('email')
                     .eq('referral_code', referral)
-                    .single();
+                    .maybeSingle();
                 if (error || !data) {
                     showToast(t.toastInvalidCode);
                     return;
