@@ -3405,16 +3405,7 @@
         }
         
         const user = await loadUserFromDB(email);
-
-if (!user) {
-    showToast('❌ Profile not found in database. Please contact support.');
-    return;
-}
-
-if (user.password !== password) {
-    showToast(t.toastInvalidAuth);
-    return;
-}
+        if (!user || user.password !== password) { showToast(t.toastInvalidAuth); return; }
         
         currentUser = email;
         cachedUserData = user;
