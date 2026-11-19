@@ -104,30 +104,6 @@
         }
         .auth-btn:hover { background: #1a2f4a; }
         .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        
-
-/* ADD THIS */
-.btn-spinner {
-    display: none;
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: #ffffff;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-right: 10px; /* Space between spinner and text */
-}
-
-.auth-btn.loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.auth-btn.loading .btn-spinner {
-    display: inline-block;
-}
-        
         .auth-divider {
             display: flex;
             align-items: center;
@@ -865,6 +841,7 @@
 <!-- LOADING SPINNER SCREEN -->
 <div id="loadingScreen" class="loading-screen">
     <div class="spinner"></div>
+    
 </div>
 <!-- AUTH CONTAINER -->
 <div id="authContainer" class="auth-container">
@@ -902,10 +879,7 @@
             <label for="authReferral" id="labelReferral">Referral code (optional)</label>
             <input type="text" id="authReferral" placeholder="Enter referral code" style="text-transform:uppercase; letter-spacing:0.1em;" />
         </div>
-        <button type="submit" class="auth-btn" id="authBtn">
-    <span class="btn-spinner"></span>
-    <span>Sign In</span>
-</button>
+        <button type="submit" class="auth-btn" id="authBtn">Sign In</button>
     </form>
 
     <div class="auth-divider" id="authDivider">or continue with</div>
@@ -3580,31 +3554,7 @@
         showDashboard();
         startChartAnimation();
     }
-    authForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    if (authBtn.disabled) return;
-    
-    // 1. Turn spinner on
-    authBtn.disabled = true;
-    authBtn.classList.add('loading');
-    
-    // (If you have real Supabase login code, it goes here. 
-    // For now, this simulates a 2-second wait so you can see the spinner)
-    try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        
-        // ... (Your success logic goes here) ...
-        // showDashboard();
-        
-    } catch (error) {
-        // ... (Your error logic goes here) ...
-        // showToast("Error");
-    } finally {
-        // 2. Turn spinner off (This always runs, even if there's an error)
-        authBtn.disabled = false;
-        authBtn.classList.remove('loading');
-    }
-});
+    authForm.addEventListener('submit', handleAuth);
 
     // =============================================
     // OTHER EVENT LISTENERS
@@ -3792,9 +3742,7 @@
             window.addEventListener('load', () => setTimeout(hideLoading, 1200));
             setTimeout(hideLoading, 4000); // safety fallback
         }
-        
     })();
-    
 
  //<-- This closes the main app script
 </script>
