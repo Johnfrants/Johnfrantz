@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    
+    
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body {
@@ -102,6 +104,30 @@
         }
         .auth-btn:hover { background: #1a2f4a; }
         .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+
+/* ADD THIS */
+.btn-spinner {
+    display: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 10px; /* Space between spinner and text */
+}
+
+.auth-btn.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-btn.loading .btn-spinner {
+    display: inline-block;
+}
+        
         .auth-divider {
             display: flex;
             align-items: center;
@@ -790,10 +816,56 @@
             display: block;
             font-weight: 400;
         }
+        
+            .card-helper {
+        font-size: 0.7rem;
+        color: #8b9bb5;
+        margin-top: 3px;
+        display: block;
+        font-weight: 400;
+    }
+
+    /* ===== SPINNER LOADING SCREEN ===== */
+    .loading-screen {
+        position: fixed;
+        inset: 0;
+        background: #eef2f7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 18px;
+        z-index: 9999;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .loading-screen.hide {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+    .spinner {
+        width: 56px;
+        height: 56px;
+        border: 5px solid #d4deea;
+        border-top-color: #0b1a30;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    .loading-label {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #0b1a30;
+        letter-spacing: -0.01em;
+    }
+</style>
     </style>
 </head>
 <body>
-
+<!-- LOADING SPINNER SCREEN -->
+<div id="loadingScreen" class="loading-screen">
+    <div class="spinner"></div>
+</div>
 <!-- AUTH CONTAINER -->
 <div id="authContainer" class="auth-container">
     <div class="lang-selector">
@@ -830,7 +902,10 @@
             <label for="authReferral" id="labelReferral">Referral code (optional)</label>
             <input type="text" id="authReferral" placeholder="Enter referral code" style="text-transform:uppercase; letter-spacing:0.1em;" />
         </div>
-        <button type="submit" class="auth-btn" id="authBtn">Sign In</button>
+        <button type="submit" class="auth-btn" id="authBtn">
+    <span class="btn-spinner"></span>
+    <span>Sign In</span>
+</button>
     </form>
 
     <div class="auth-divider" id="authDivider">or continue with</div>
@@ -3505,7 +3580,31 @@
         showDashboard();
         startChartAnimation();
     }
-    authForm.addEventListener('submit', handleAuth);
+    authForm.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    if (authBtn.disabled) return;
+    
+    // 1. Turn spinner on
+    authBtn.disabled = true;
+    authBtn.classList.add('loading');
+    
+    // (If you have real Supabase login code, it goes here. 
+    // For now, this simulates a 2-second wait so you can see the spinner)
+    try {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // ... (Your success logic goes here) ...
+        // showDashboard();
+        
+    } catch (error) {
+        // ... (Your error logic goes here) ...
+        // showToast("Error");
+    } finally {
+        // 2. Turn spinner off (This always runs, even if there's an error)
+        authBtn.disabled = false;
+        authBtn.classList.remove('loading');
+    }
+});
 
     // =============================================
     // OTHER EVENT LISTENERS
@@ -3670,10 +3769,34 @@
                 showAuth();
             }
         });
-    } else {
-        showAuth();
-    }
-})();
+           } else {
+            showAuth();
+        }
+    }); // <-- This is line 3724
+
+    // =============================================
+    // SPINNER LOADING SCREEN
+    // =============================================
+    (function initLoadingSpinner() {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (!loadingScreen) return;
+
+        function hideLoading() {
+            loadingScreen.classList.add('hide');
+            setTimeout(() => loadingScreen.remove(), 600);
+        }
+
+        if (document.readyState === 'complete') {
+            setTimeout(hideLoading, 1200);
+        } else {
+            window.addEventListener('load', () => setTimeout(hideLoading, 1200));
+            setTimeout(hideLoading, 4000); // safety fallback
+        }
+        
+    })();
+    
+
+ //<-- This closes the main app script
 </script>
 </body>
 </html>
